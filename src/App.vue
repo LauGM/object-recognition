@@ -1,36 +1,45 @@
 <template>
-  <div class="w-3/4 m-auto">
+  <div class="container-fluid">
     <div>
-      <h1 class="text-2xl text-green-800">Object detection with Tensorflow</h1>
+      <h1 class="text-info">Detección de objetos</h1>
       <div v-if="!isStreaming">
-        <button @click="openCamera">Open Camera</button>
+        <button class="btn btn-sm btn-dark" @click="openCamera">Abrir Camara</button>
       </div>
-       <div v-else class="flex justify-between">
+       <div v-else>
               <button
+                class="btn btn-sm btn-dark"
                 @click="stopStreaming"
               >
-                Stop Streaming
+                Detener streaming
               </button>
               <button
+                class="btn btn-sm btn-dark"
                 @click="snapshot"
               >
-                Snapshot
+                Tomar foto
               </button>
        </div>
-      <video ref="videoRef" autoplay="true" width="100" id="video"/>
-      <div class="bg-gray-300 h-64 w-64 rounded-lg shadow-md bg-cover bg-center">
-        <img class="w-64" ref="imgRef" src="https://images.unsplash.com/photo-1503792501406-2c40da09e1e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=752&q=80"
-         alt="sciscors" crossorigin="anonymous">
+       <video v-show="isStreaming" ref="videoRef" autoplay class="img-fluid" id="video"/>
+      <div>
+        <img class="img-fluid" ref="imgRef" id="imagen" src="https://images.hola.com/imagenes/mascotas/20221020219416/razas-perros-toy/1-154-394/01-que-son-perros-toy-a.jpg"
+         alt="imagen a predecir" crossorigin="anonymous">
+         <div v-if="result.length > 0">
+              <h3>{{ result.toUpperCase() }}</h3>
+          </div>
+      </div>
+      <div v-if="imgRef" class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-sm">Link</span>
+        </div>
+        <input v-model="imgRef.src" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
       </div>
         <button
-              @click="detect"
-            >
-              <span v-if="isLoading">Loading ... </span>
-              <span v-else>Detect Object</span>
+          class="btn btn-sm btn-dark"
+          @click="detect"
+        >
+              <span v-if="isLoading">Intentando predecir ... </span>
+              <span v-else>Detectar Objecto</span>
         </button>
-      <div v-if="result.length > 0">
-              <p>{{ result[0].class }}</p>
-          </div>
     </div>
   </div>
 </template>
@@ -42,23 +51,26 @@ require('@tensorflow/tfjs-backend-cpu')
 require('@tensorflow/tfjs-backend-webgl')
 const cocoSsd = require('@tensorflow-models/coco-ssd')
 const video = document.getElementById("video") as HTMLVideoElement;
-const img = document.getElementById("video") as HTMLImageElement;
+const img = document.getElementById("imagen") as HTMLImageElement;
 export default defineComponent({
   name: 'App',
   setup(){
-    const imgRef = ref(img);
+    const imgRef = ref<HTMLImageElement>(img);
     const isLoading = ref(false);
     const videoRef = ref<HTMLVideoElement>(video);
     const isStreaming = ref(false);
-    const result = ref([]);
+    const result = ref("");
 
     async function detect() {
+      isLoading.value = true;
       const img = imgRef.value;
+      console.log(img);
       const model = await cocoSsd.load();
       const predictions = await model.detect(img);
-      result.value = predictions;
-      isLoading.value = false;
+      console.log("Prediccion:" + predictions[0]?.class || "vacio");
+      result.value = predictions[0]?.class || "vacio";
       console.log(predictions, img);
+      isLoading.value = false;
     }  
     async function openCamera() {
       if (navigator.mediaDevices.getUserMedia) {
@@ -92,18 +104,11 @@ export default defineComponent({
       openCamera,
       stopStreaming,
       snapshot,
+      isLoading
     }
   }
 });
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
