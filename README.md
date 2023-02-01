@@ -1,5 +1,5 @@
 # image-recognition-app
-## First of all, thanks Uma-Victor for your contribution to the community. I`ve made some changes on the original project, based on some points that were not working for me
+## First of all, thanks Uma-Victor for your contribution to the community. I`ve made some changes on the original project, based on some points that were not working for me and added a bit of Bootstrap.
 
 ## Project setup
 ```
