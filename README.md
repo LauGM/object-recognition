@@ -1,5 +1,7 @@
 # image-recognition-app
-## First of all, thanks Uma-Victor for your contribution to the community. I`ve made some changes on the original project, based on some points that were not working for me and added a bit of Bootstrap.
+## First of all, thanks Uma-Victor for your contribution to the community. I`ve made some changes on the original project, based on some points.  For example now you can choose any photo and insert that into the input, so you can play with different kinds of objects and I also added a bit of Bootstrap.
+
+## Perhaps you need to install Allow CORS navigator extension
 
 ## Project setup
 ```
